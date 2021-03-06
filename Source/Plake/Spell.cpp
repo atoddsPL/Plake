@@ -55,7 +55,7 @@ void ASpell::InstantCast()
 	{
 		UArrowComponent* Arro = ActorOwner->GetSpellArrowComponent();
 
-		FVector Location = Arro->GetComponentLocation() + ActorOwner->GetActorLocation();
+		FVector Location = Arro->GetRelativeLocation() + ActorOwner->GetActorLocation();
 		FRotator Rotation = ActorOwner->GetActorRotation();
 		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		FVector PCLoc;
