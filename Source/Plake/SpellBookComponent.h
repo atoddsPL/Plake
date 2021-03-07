@@ -35,10 +35,16 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 		TSubclassOf<class ASpell> BasicSpellClass;
 	
+	UPROPERTY(ReplicatedUsing = OnRep_BasicSpell)
 		ASpell* BasicSpell;
-	UPROPERTY()
+	UPROPERTY(Replicated)
 		ASpell* SelectedSpell;
 
+	UFUNCTION()
+		void OnRep_BasicSpell();
+
+	UFUNCTION(Server, Reliable)
+		void Server_SpawnBasicSpell();
 
 		
 };

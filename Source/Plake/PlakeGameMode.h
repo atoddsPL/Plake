@@ -13,6 +13,8 @@ class APlakeGameMode : public AGameModeBase
 
 public:
 	APlakeGameMode();
+
+	
 };
 
 

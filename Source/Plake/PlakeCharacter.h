@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "PlayerStatsComponent.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "SpellBookComponent.h"
@@ -80,13 +82,24 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class UArrowComponent* ProjectileSpawnArrowComponent;
 
+	UPROPERTY(VisibleAnywhere)
+		class UPlayerStatsComponent* PlayerStatsComponent;
+
 	void CastStart();
 	void CastEnd();
 
+	UFUNCTION(Client, Unreliable)
+		void TryUpdateUI();
 
 public:
 	//SETTERS AND GETTERS:
 	UArrowComponent* GetSpellArrowComponent() { return ProjectileSpawnArrowComponent; };
-
+	UFUNCTION(BlueprintCallable)
+	UPlayerStatsComponent* GetPlayerStatsComponent() { return PlayerStatsComponent; };
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	
+	
+	// VALIDATIONS
+	bool ManaCheck(float ManaCost);
 };
 

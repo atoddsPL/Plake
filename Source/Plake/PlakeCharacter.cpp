@@ -1,6 +1,11 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "PlakeCharacter.h"
+
+//GAME
+#include "PlakePlayerController.h"
+
+//ENGINE
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -8,7 +13,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "Engine/Engine.h"
 
 //////////////////////////////////////////////////////////////////////////
 // APlakeCharacter
@@ -17,6 +23,8 @@ APlakeCharacter::APlakeCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+
+	bReplicates = true;
 
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
@@ -51,6 +59,9 @@ APlakeCharacter::APlakeCharacter()
 	ProjectileSpawnArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("Spell spawn arrow"));
 	ProjectileSpawnArrowComponent->SetupAttachment(RootComponent);
 
+
+	PlayerStatsComponent = CreateDefaultSubobject<UPlayerStatsComponent>(TEXT("Stats"));
+	
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -99,6 +110,38 @@ void APlakeCharacter::CastStart()
 
 void APlakeCharacter::CastEnd()
 {
+}
+
+void APlakeCharacter::TryUpdateUI_Implementation()
+{
+	if (!GEngine) return;
+
+	APlakePlayerController* PC = Cast<APlakePlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
+	if (!PC) return;
+	PC->UpdateUI(PlayerStatsComponent);
+}
+
+float APlakeCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	UE_LOG(LogTemp, Warning, TEXT("Damage taken %f"), DamageAmount);
+	if (!PlayerStatsComponent) { return 0.0f; }
+
+	if (!PlayerStatsComponent->ChangeHealth(-DamageAmount))
+	{
+		// Obs³uga deatha!
+	}
+	
+	TryUpdateUI();
+	return 0.0f;
+}
+
+bool APlakeCharacter::ManaCheck(float ManaCost)
+{
+
+	if (!PlayerStatsComponent) return false;
+	if (PlayerStatsComponent->GetCurrentMana() - ManaCost >= 0) return true;
+	return false;
 }
 
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "PlayerStatsComponent.h"
 #include "PlakePlayerController.generated.h"
 
 /**
@@ -13,5 +14,7 @@ UCLASS()
 class PLAKE_API APlakePlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+public:
+		UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+		void UpdateUI(UPlayerStatsComponent* PlayerStats);
 };
